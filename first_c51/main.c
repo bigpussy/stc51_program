@@ -1,16 +1,6 @@
-#include<STC12C2052AD.h>
+#include<STC12C5A60S2.h>
 
-sbit SPEAKER = P3 ^ 7;
-#define KEY P1
-unsigned char MUSIC;
-unsigned char STH0;
-unsigned char STL0;
-unsigned int code tab[] = {
-	64021,64103,64260,64400,
-	64524,64580,64684,64777,
-	64820,64898,64968,65030,
-	65058,65110,65157,65178
-};
+
 /*********************************************************************************************
 函数名：毫秒级CPU延时函数
 调  用：DELAY_MS (?);
@@ -26,8 +16,7 @@ void DELAY_MS (unsigned int a){
 	}
 }
 /*********************************************************************************************/
-sbit LED1 = P1 ^ 7;
-sbit LED2 = P1 ^ 6;
+sbit LED = P4 ^ 6;
 
 /*********************************************************************************************
 函数名：主函数
@@ -38,57 +27,12 @@ sbit LED2 = P1 ^ 6;
 备  注：
 /**********************************************************************************************/
 void main (void){
-	P1M0 = 0x00;
-	P1M1 = 0x00;
-	P3M0 = 0x00;
-	P3M1 = 0x80;
-	TMOD = 0x01;
-	ET0 = 1;
-	EA = 1;
-	KEY = 0xff;
+	P4SW = 0xff;
 	while(1){
-		if(KEY != 0xff){
-			switch(~KEY){
-				case  0x01:
-					MUSIC = 7;
-					break;
-				case  0x02:
-					MUSIC = 6;
-					break;
-				case  0x04:
-					MUSIC = 5;
-					break;
-				case  0x08:
-					MUSIC = 4;
-					break;
-				case  0x10:
-					MUSIC = 3;
-					break;
-				case  0x20:
-					MUSIC = 2;
-					break;
-				case  0x40:
-					MUSIC = 1;
-					break;
-				case  0x80:
-					MUSIC = 0;
-					break;
-			}
-			STH0 = tab[MUSIC] / 256;
-			STL0 = tab[MUSIC] % 256;
-			TR0 = 1;
-		}else{
-			SPEAKER = 1;
-			TR0 = 0;
-		}
+		LED = ~LED;
+		DELAY_MS(100);
 	}
 	
-	
 }
-/**********************************************************************************************/
-void t0(void) interrupt 1 using 0{
-	TH0 = STH0;
-	TL0 = STL0;
-	SPEAKER = ~SPEAKER;
-}
+
 
